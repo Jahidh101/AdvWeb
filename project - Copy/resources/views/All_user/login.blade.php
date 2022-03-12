@@ -8,7 +8,7 @@
                     @endif
                 @endforeach
             </div>
-<form action="" method="post">
+<form action="{{route('loginUser')}}" method="post">
     {{Session::get('msg')}}
     <h1>Login</h1>
     {{csrf_field()}}
@@ -22,7 +22,9 @@
     <label><b>Password</b></label><br>
     <input type="password" placeholder="Enter Password" name="password"><br>
 
-    <button type="submit">Login</button>
+    <button type="submit">Login</button><br>
+
+    <a href="{{route('forgot.password')}}">Forgot your password?</a>
 
 </form> 
 </html>

@@ -61,36 +61,6 @@ class AdminController extends Controller
         return view('All_user.register')->with('types', $list);
     }
 
-    public function addUser(Request $req){
-        $req->validate(
-            [
-                'name'=>'required|regex:/^[A-Z a-z.]+$/',
-                'userTypes_id'=>'required',
-                'username'=>'required|min:5|max:20|unique:all_users,username',
-                'email'=>'required|email|unique:all_users,email',
-                'phone'=>'required|regex:/^01[4-9]{1}[0-9]{8}$/|unique:all_users,phone',
-                'password'=>'required|min:3|max:20',
-                'confirmPassword'=>'required|same:password'
-            ],
-            [
-                'username.required'=>'Please provide username',
-                'userTypes_id.required'=>'User Type field is required',
-                'confirmPassword.same'=>'Password and confirm password must be same'
-            ]
-        );
-        $user = new All_user();
-        $user->username = $req->username;
-        $user->password = md5($req->password);
-        $user->name = $req->name;
-        $user->phone = $req->phone;
-        $user->email = $req->email;
-        $user->user_types_id = $req->userTypes_id;
-        $user->status = 1;
-        
-        $user->save();
-        return "Username $req->username($req->name) added successfully";
-    }
-
     public function allLoginHistory(){
         $list = Login_history::all();
         return view('Users.Admin.allLoginHistory')->with('list', $list);

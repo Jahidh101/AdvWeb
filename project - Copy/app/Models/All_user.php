@@ -20,4 +20,12 @@ class All_user extends Model
         return $this->hasMany(Login_history::class,'username','username');
     }
 
+    public function chats_s(){
+        return $this->hasMany(Chat::class,'sender','username');
+    }
+
+    public function chats_r(){
+        return $this->hasMany(Chat::class,'receiver','username');
+    }
+
 }

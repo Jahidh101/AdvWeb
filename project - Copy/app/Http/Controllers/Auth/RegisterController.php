@@ -79,9 +79,11 @@ class RegisterController extends Controller
         $req->validate(
             [
                 'name'=>'required|regex:/^[A-Z a-z.]+$/',
+                'gender'=>'required',
                 'userTypes_id'=>'required',
-                'username'=>'required|min:5|max:20|unique:all_users,username',
+                'username'=>'required|min:5|max:10|unique:all_users,username',
                 'email'=>'required|email|unique:all_users,email',
+                'address'=>'required',
                 'password'=>'required|min:3|max:20',
                 'confirmPassword'=>'required|same:password'
             ],
@@ -95,10 +97,12 @@ class RegisterController extends Controller
         $user->username = $req->username;
         $user->password = md5($req->password);
         $user->name = $req->name;
+        $user->gender = $req->gender;
         $user->email = $req->email;
+        $user->address = $req->address;
         $user->user_types_id = $req->userTypes_id;
         $user->status = 1;
-        $user->verification_code = sha1(time());
+        $user->verification_code = sha1($req->username.time());
         $user->save();
 
         if($user != null){

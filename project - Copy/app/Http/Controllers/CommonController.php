@@ -6,13 +6,14 @@ use Illuminate\Http\Request;
 use App\Models\User_type;
 use App\Models\All_user;
 use App\Models\Login_history;
+use App\Http\Controllers\MailController;
+use App\Models\Chat;
+
+
 
 class CommonController extends Controller
 {
-    public function login(){
-        return view('All_user.login');
-    }
-
+    
     public function register(){
         $list = User_type::where('type', 'patient')->first();
         return view('All_user.register')->with('types', $list);
@@ -62,11 +63,11 @@ class CommonController extends Controller
             }
             if((session()->get('userType')) == 'doctor'){
 
-                return "doctor login";
+                return redirect()->route('doctor.homepage');
             }
             if((session()->get('userType')) == 'patient'){
 
-                return "patient login";
+                return redirect()->route('patient.homepage');
             }
             if((session()->get('userType')) == 'seller'){
 
@@ -88,7 +89,110 @@ class CommonController extends Controller
     }
 
     public function userInfo(Request $req){
-        $info = All_user::where('username', $req->username)->first();
+        $info = All_user::where('username', decrypt($req->username))->first();
+        //return $info;
         return view('All_user.userInfo')->with('info', $info);
+    }
+
+    public function userProfileEdit(){
+        $user = All_user::where('username',session()->get('username'))->first(['name','gender', 'address']);
+        //return $user;
+        return view('All_user.editProfile')->with('info', $user);
+    }
+
+    public function userProfileEditSubmit(Request $req){
+        $req->validate(
+            [
+                'name'=>'required|regex:/^[A-Z a-z.]+$/',
+                'gender'=>'required',
+                'address'=>'required',
+            ]
+        );
+        
+        $user = All_user::where('username', session()->get('username'))->first();
+        $user->name = $req->name;
+        $user->gender = $req->gender;
+        $user->address = $req->address;
+        $user->save();
+        session()->flash('alert-success', 'Your profile has been edited');
+        
+        return redirect()->route('user.personal.info', ['username'=>encrypt(session()->get('username'))]);
+    }
+
+    public function forgotPassword(){
+        return view('All_user.forgotPassword');
+    }
+
+    public function forgotPasswordSubmit(Request $req){
+        $user = All_user::where('username', $req->username)->first();
+        if($user){
+            $user->verification_code = sha1($req->username.time());
+            $user->save();
+            MailController::sendForgotPasswordEmail($user->name, $user->email, $user->verification_code);
+            return redirect()->back()->with(session()->flash('alert-success', 'Password change verification has been sent to your email'));
+        }
+        return redirect()->back()->with(session()->flash('alert-danger', 'Username does not exists'));
+    }
+
+    public function resetPassword(Request $req){
+        return view('All_user.resetPassword')->with('verification_code', $req->verification_code);
+    }
+
+    public function resetPasswordSubmit(Request $req){
+        $req->validate(
+            [
+                'password'=>'required|min:3|max:20',
+                'confirmPassword'=>'required|same:password'
+            ],
+            [
+                'confirmPassword.same'=>'New Password and confirm password must be same'
+            ]
+        );
+
+        $user = All_user::where('verification_code', $req->verification_code)->first();
+        if($user){
+            $user->password = md5($req->password);
+            $user->save();
+            return redirect()->route('loginUser')->with(session()->flash('alert-success', 'Password changed successfully. Please login'));
+        }
+        return redirect()->route('loginUser')->with(session()->flash('alert-danger', 'Something went wrong, please try again.'));
+
+    }
+
+    public function addProfilePicture(){
+        return view('All_user.addProfilePicture');
+    }
+
+    public function addProfilePictureSubmit(Request $req)
+    {
+        $req->validate(
+            [
+            'profile_pic' => 'mimes:jpg,bmp,png,jpeg',
+            ]
+        );
+        $user = All_user::where('username', session()->get('username'))->first();
+        if($user){
+            $imageName = session()->get('username').time().'.'.$req->file('profile_pic')->getClientOriginalExtension();
+            $req->file('profile_pic')->storeAs('public/profile_pics', $imageName);
+            $user->profile_pic = "storage/profile_pics/".$imageName;
+            $user->save();
+            return redirect()->back()->with(session()->flash('alert-success', 'Profile picture successfully uploaded'));
+        }
+        return redirect()->back()->with(session()->flash('alert-danger', 'Please try again.'));
+    }
+
+    public function chat(Request $req){
+        $receiverUsername = $req->receiverUsername;
+        $chat = Chat::where(function ($query) use ($receiverUsername) {
+            $query->where('sender', session()->get('username'))
+                  ->where('receiver', $receiverUsername);
+        })->orWhere(function ($query) use ($receiverUsername) {
+            $query->where('receiver', session()->get('username'))
+                  ->where('sender', $receiverUsername);
+        })->get();
+
+        //return $chat[0]->all_users_s;
+        //return $chat;
+        return view('All_user.chat')->with('chat', $chat)->with('receiverUsername', $receiverUsername);
     }
 }

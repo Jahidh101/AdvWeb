@@ -5,6 +5,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\PatientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,18 +32,33 @@ Route::get('/getUserType/list',[AdminController::class,'userTypeList'])->name('a
 
 //all_user add edit
 Route::get('/addUser',[AdminController::class,'addUserForm'])->name('admin.addUser.form');
-Route::post('/addUser',[AdminController::class,'addUser'])->name('admin.addUser');
+Route::post('/addUser',[RegisterController::class, 'register'])->name('admin.addUser');
 Route::get('/user/info/{username}',[CommonController::class,'userInfo'])->name('user.personal.info');
+Route::get('/UserProfile/edit',[CommonController::class,'userProfileEdit'])->name('user.profile.edit');
+Route::post('/UserProfile/edit',[CommonController::class,'userProfileEditSubmit'])->name('user.profile.edit');
+Route::get('/add/profilePicture',[CommonController::class,'addProfilePicture'])->name('add.profile.picture');
+Route::post('/add/profilePicture',[CommonController::class,'addProfilePictureSubmit'])->name('add.profile.picture');
 
 //login
 Route::get('/login/user', [CommonController::class,'loginUser'])->name('loginUser');
 Route::post('/login/user',[CommonController::class,'loginSubmit'])->name('loginUser');
 Route::get('/login/history',[AdminController::class,'allLoginHistory'])->name('admin.login.history.all');
 Route::get('/logout', [CommonController::class,'logout'])->name('logout');
+Route::get('/forgot/password', [CommonController::class,'forgotPassword'])->name('forgot.password');
+Route::post('/forgot/password', [CommonController::class,'forgotPasswordSubmit'])->name('forgot.password');
+Route::get('/reset/password', [CommonController::class,'resetPassword'])->name('reset.password');
+Route::post('/reset/password', [CommonController::class,'resetPasswordSubmit'])->name('reset.password');
 
 //redirect aftter login
 Route::get('/homepage',[AdminController::class,'adminHomepage'])->name('admin.homepage');
+Route::get('/homepage/doctor',[DoctorController::class,'doctorHomepage'])->name('doctor.homepage');
+Route::get('/homepage/patient',[PatientController::class,'patientHomepage'])->name('patient.homepage');
 
+//patient
+Route::get('/doctor/list',[PatientController::class,'doctorList'])->name('patient.doctorList');
+
+//chat
+Route::get('/chat',[CommonController::class,'chat'])->name('chat');
 
 Auth::routes();
 
