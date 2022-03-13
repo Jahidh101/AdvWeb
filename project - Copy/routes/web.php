@@ -59,6 +59,8 @@ Route::get('/doctor/list',[PatientController::class,'doctorList'])->name('patien
 
 //chat
 Route::get('/chat',[CommonController::class,'chat'])->name('chat');
+Route::post('/chat',[CommonController::class,'chatSubmit'])->name('chat');
+
 
 Auth::routes();
 

@@ -183,6 +183,8 @@ class CommonController extends Controller
 
     public function chat(Request $req){
         $receiverUsername = $req->receiverUsername;
+        $receiverInfo = All_user::where('username', $receiverUsername)->first();
+
         $chat = Chat::where(function ($query) use ($receiverUsername) {
             $query->where('sender', session()->get('username'))
                   ->where('receiver', $receiverUsername);
@@ -193,6 +195,27 @@ class CommonController extends Controller
 
         //return $chat[0]->all_users_s;
         //return $chat;
-        return view('All_user.chat')->with('chat', $chat)->with('receiverUsername', $receiverUsername);
+        return view('All_user.chat')->with('chats', $chat)->with('receiverInfo', $receiverInfo);
     }
+
+    public function chatSubmit(Request $req){
+        $req->validate(
+            [
+            'chatMsg' => 'required',
+            ]
+        );
+        //return $req;
+        $chat = new Chat();
+        $chat->sender = session()->get('username');
+        $chat->receiver = $req->receiverUsername;
+        $chat->message = $req->chatMsg;
+        $chat->sent_time = date('Y-m-d H:i:s');
+        $chat->is_read = 0;
+        $chat->save();
+        return redirect()->route('chat', ['receiverUsername'=>$chat->receiver]);
+        //return $req;
+        //return redirect()->route('chat');
+    }
+
+    
 }

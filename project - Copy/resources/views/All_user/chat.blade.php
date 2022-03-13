@@ -1,38 +1,51 @@
 @extends('layouts/header')
 @section('content')
+<head></head>
 <body>
 <h1>Chatting</h1>
-<b>Chatting with </b><br>
+<b>Chatting with {{$receiverInfo->user_types->type}} {{$receiverInfo->name}} </b><br>
 <br>
+@foreach($chats as $chat)
 <div class ="chatArea">
-    <div class="receiverBackgroundColor">
-        <div class="showChat-name">
-        docddddddd :
-        </div>
-
-        <div class="showChat-msg">
-        dor msgfgfd gfdhgf hg fhg fhgffgh fghf ghg fhg fh fghgfhg hhfdgfdgbfd gfdbghfdbgfd vfdnmgbfg fdgfhbgfh gfdbg vbgbvfd v bv erjh vb g erv  gfverb
-        </div>
-    </div>
+    @if($chat->sender == Session::get('username'))
     <div class="senderBackgroundColor">
         <div class="showChat-msg alignRight">
-        my msg hfdshbfcds fjhfcgdsh fdbnfgds fdfbvcdshc as d sabxbs ds cbasf  dcbdshf dnscb sdhf  dsfjehf c ds cebfc nds ch cdsn cwehc ds nmc bwh cvds bncv hmbv s
+        {{$chat->message}}
         </div>
 
         <div class="showChat-name alignRight">
         : You
         </div>
     </div>
-</div>
+    @else
+    <div class="receiverBackgroundColor">
+        <div class="showChat-name">
+        {{$chat->sender}} :
+        </div>
 
-<form action="" method="post">
+        <div class="showChat-msg">
+        {{$chat->message}} 
+        </div>
+    </div>
+    @endif
+</div>
+@endforeach
+
+<form action="{{route('chat', ['receiverUsername'=>$receiverInfo->username])}}" method="post">
     {{csrf_field()}}
 
     <div>
-    <textarea class="textareaSize" name="address"></textarea><br><br>
+    <textarea class="textareaSize" name="chatMsg"></textarea><br>
     </div>
+    @error('chatMsg')
+    <span class=text-danger>{{$message}}</span><br>
+    @enderror
+    <br>
 
     <div class ="chatArea alignRight"><button type="submit" vlaue="registration">Send</button></div><br>
 </form>
+
+
+</script>
 </body>
 @endsection
