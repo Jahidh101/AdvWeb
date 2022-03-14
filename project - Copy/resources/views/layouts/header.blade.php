@@ -19,13 +19,17 @@
             
         @endif
 
-        @if(Session::get('userType') == 'doctor')
-            
-        @endif
-
+        
         @if(Session::has('username'))
+            @if(Session::get('userType') != 'doctor')
+                <a href ="{{route('patient.doctorList')}}">Doctorlist</a>
+            @endif
+
+            @if(Session::get('userType') != 'patient')
+                <a href ="{{route('doctor.patientList')}}">Patientlist</a>
+            @endif
+
             <a href="{{route('user.personal.info',['username'=>encrypt(Session::get('username'))])}}">My profile</a>
-            <a href ="{{route('patient.doctorList')}}">Doctorlist</a>
             <a href="{{route('add.profile.picture')}}">AddProfilePicture</a>
             <a href="{{route('logout')}}">Logout</a>
 

@@ -30,8 +30,14 @@ div.showChat-msg {
 .alignRight{
     text-align: right;
 }
+.alignLeft{
+    text-align: left;
+}
 .chatArea{
     width:700px;
+}
+.colorText{
+    color:green;
 }
 .receiverBackgroundColor{
     background-color: rgb(133, 132, 219);

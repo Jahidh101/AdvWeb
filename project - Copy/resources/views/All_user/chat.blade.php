@@ -30,6 +30,7 @@
     @endif
 </div>
 @endforeach
+<div><a href="{{route('doctor.chat.read',['receiverUsername'=> $receiverInfo->username])}}"><button>Read</button></a></div><br>
 
 <form action="{{route('chat', ['receiverUsername'=>$receiverInfo->username])}}" method="post">
     {{csrf_field()}}
@@ -43,8 +44,8 @@
     <br>
 
     <div class ="chatArea alignRight"><button type="submit" vlaue="registration">Send</button></div><br>
+    
 </form>
-
 
 </script>
 </body>

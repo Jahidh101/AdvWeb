@@ -24,7 +24,7 @@ Route::get('/', function () {
 });
 
 //user type add edit
-Route::get('/addUserType',[AdminController::class,'addUserType'])->name('admin.addUserType');
+Route::get('/addUserType',[AdminController::class,'addUserType'])->name('admin.addUserType')->middleware('adminAuth');
 Route::post('/addUserType',[AdminController::class,'addUserTypeSubmit'])->name('admin.addUserType.submit');
 Route::get('/UserType/edit',[AdminController::class,'UserTypeEdit'])->name('admin.UserType.edit');
 Route::post('/UserType/edit',[AdminController::class,'UserTypeEditSubmit'])->name('admin.UserType.edit.submit');
@@ -54,8 +54,12 @@ Route::get('/homepage',[AdminController::class,'adminHomepage'])->name('admin.ho
 Route::get('/homepage/doctor',[DoctorController::class,'doctorHomepage'])->name('doctor.homepage');
 Route::get('/homepage/patient',[PatientController::class,'patientHomepage'])->name('patient.homepage');
 
-//patient
+//doctor list
 Route::get('/doctor/list',[PatientController::class,'doctorList'])->name('patient.doctorList');
+
+//patient list
+Route::get('/patient/list',[DoctorController::class,'patientList'])->name('doctor.patientList');
+Route::get('/chat/read',[DoctorController::class,'chatRead'])->name('doctor.chat.read');
 
 //chat
 Route::get('/chat',[CommonController::class,'chat'])->name('chat');
