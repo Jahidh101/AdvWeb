@@ -21,11 +21,11 @@
 
         
         @if(Session::has('username'))
-            @if(Session::get('userType') != 'doctor')
+            @if(Session::get('userType') == 'patient')
                 <a href ="{{route('patient.doctorList')}}">Doctorlist</a>
             @endif
 
-            @if(Session::get('userType') != 'patient')
+            @if(Session::get('userType') == 'doctor')
                 <a href ="{{route('doctor.patientList')}}">Patientlist</a>
             @endif
 

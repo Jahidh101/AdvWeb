@@ -47,7 +47,7 @@ class CommonController extends Controller
             $entry = new Login_history();
             $entry->username = $req->username;
             $entry->login_time = $dateNow;
-            //$entry->save();
+            $entry->save();
 
             if($user->is_verified == 0){
                 return redirect()->back()->with(session()->flash('alert-danger', 'Username is not verified.'));

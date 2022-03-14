@@ -15,7 +15,7 @@ class PatientController extends Controller
 
     public function doctorList(){
         $unreadChat = Chat::where('receiver',session()->get('username'))->where('is_read', 0)->distinct('sender')->pluck('sender');
-        $readChat = Chat::where('receiver',session()->get('username'))->where('is_read', 1)->distinct('sender')->pluck('sender');
+        $readChat = Chat::where('sender',session()->get('username'))->distinct('receiver')->pluck('receiver');
         //return $readChat->count();
         $info = All_user::where('user_types_id', 2)->where('is_verified', 1)->get();
         //return $info;
