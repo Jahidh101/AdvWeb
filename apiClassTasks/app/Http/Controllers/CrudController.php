@@ -100,4 +100,18 @@ class CrudController extends Controller
         ];
         return response()->json($details);
     }
+
+    public function deptsStudentsDetails(Request $req){
+        $departments = Department::all();
+        $details =array();
+        foreach($departments as $department){
+            $detail = [
+                'id' => $department->id,
+                'name' => $department->name,
+                'students' => $department->students,
+            ];
+            $details[] = array($detail);
+        }
+        return response()->json($details);
+    }
 }

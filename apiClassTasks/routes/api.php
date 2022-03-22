@@ -34,3 +34,4 @@ Route::get("/delete/department/{id}",[CrudController::class,'deleteDepartment'])
 
 //student&dept
 Route::get("/department/student/details/{id}",[CrudController::class,'deptStudentDetails']);
+Route::get("/departments/students/details",[CrudController::class,'deptsStudentsDetails']);
